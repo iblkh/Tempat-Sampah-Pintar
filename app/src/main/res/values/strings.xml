@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">SmartBin</string>
+    <string name="SmartBin" />
+    <string name="masukan_email">masukan email\n</string>
+    <string name="masukan_password">masukan password\n</string>
+    <string name="lupa_password">lupa password</string>
+    <string name="login">login</string>
+    <string name="sudah_punya">sudah punya akun</string>
+    <string name="belum_punya">belum punya akun\n</string>
+    <string name="daftar">daftar\n</string>
+    <string name="smartbin_logo_description">\n</string>
+    <string name="greeting_user_halo" />
+    <string name="register_prompt_dulu" />
+    <string name="hint_full_name_input" />
+    <string name="hint_email_input" />
+    <string name="hint_password_input" />
+    <string name="hint_confirm_password" />
+    <string name="button_register_text" />
+    <string name="app_logo_description" />
+    <string name="login_greeting" />
+    <string name="login_prompt" />
+    <string name="hint_email_login" />
+    <string name="hint_password_login" />
+    <string name="button_login_text" />
+    <string name="toast_email_empty" />
+    <string name="toast_password_empty" />
+    <string name="toast_email_invalid" />
+    <string name="toast_login_success" />
+    <string name="toast_login_failed" />
+    <string name="toast_registration_success" />
+    <string name="toast_password_short" />
+    <string name="toast_confirm_password_empty" />
+    <string name="toast_password_mismatch" />
+    <string name="toast_name_empty" />
+
+</resources>
