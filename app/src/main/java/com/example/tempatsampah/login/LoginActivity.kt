@@ -26,7 +26,6 @@ class LoginActivity : AppCompatActivity() {
     private var isPasswordVisible = false
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
