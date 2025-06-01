@@ -19,9 +19,6 @@ import com.example.tempatsampah.databinding.ActivityLoginBinding
 import com.example.tempatsampah.register.RegisterActivity
 import com.example.tempatsampah.dasboard.DasboardActivity
 
-
-
-
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var sharedPreferences: SharedPreferences
