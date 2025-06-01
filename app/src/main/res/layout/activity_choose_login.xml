@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:text="SmartBin"
         android:textColor="@android:color/white"
-        android:textSize="32sp"
+        android:textSize="31sp"
         android:textStyle="bold"
         android:layout_marginTop="8dp" />
 
