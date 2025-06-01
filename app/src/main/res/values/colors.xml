@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="pink">#ffb8c6</color>
+    <color name="birupersib">#0000FF</color>
+    <color name="hijau">#485935</color>
+
+
+
+    <color name="green_start_gradient">#6CF160</color>
+    <color name="dark_end_gradient">#070F1E</color>
+
+</resources>
