@@ -68,6 +68,3 @@ class SplashScreenActivity : AppCompatActivity() { // Pastikan nama kelas ini ko
 
 
 
-
-
-
