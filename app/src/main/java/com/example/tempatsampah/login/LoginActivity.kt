@@ -9,9 +9,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.InputType
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.LinearInterpolator
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tempatsampah.R
@@ -41,6 +43,8 @@ class LoginActivity : AppCompatActivity() {
         setupAnimation()
         setupClickListeners()
         setupPasswordToggle()
+        setupEditTextPlaceholders()
+//        setupAutoNavigation() // Tambah fungsi ini
 
         // Check for registration data and pre-fill fields
         intent.getStringExtra("registered_email")?.let { email ->
@@ -50,6 +54,55 @@ class LoginActivity : AppCompatActivity() {
             binding.passwordEditText.setText(password)
         }
     }
+
+    // ... di luar onCreate(), sebagai private fun
+    private fun setupEditTextPlaceholders() {
+        // Mendapatkan nilai string dari resources
+        val initialEmailText = getString(R.string.tombol_masukan_email) // Atau R.string.initial_email_text jika ada
+        val initialPasswordText = getString(R.string.tombol_masukan_password)// Atau ambil dari R.string jika sudah ada
+
+        // Flag untuk melacak apakah teks awal sudah dihapus untuk masing-masing EditText
+        var isEmailInitialTextCleared = false
+        var isPasswordInitialTextCleared = false
+
+        // Email EditText listeners
+        binding.emailEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                // Saat EditText mendapatkan fokus
+                if (!isEmailInitialTextCleared && binding.emailEditText.text.toString() == initialEmailText) {
+                    binding.emailEditText.setText("") // Hapus teks awal
+                    isEmailInitialTextCleared = true // Set flag bahwa teks sudah dihapus
+                }
+            } else {
+                // Saat EditText kehilangan fokus
+                if (binding.emailEditText.text.toString().isEmpty()) {
+                    binding.emailEditText.setText(initialEmailText) // Kembalikan teks awal jika kosong
+                    isEmailInitialTextCleared = false // Reset flag
+                }
+            }
+        }
+
+        // Tidak perlu setOnClickListener di sini jika OnFocusChangeListener sudah menangani.
+        // Cukup biarkan OnFocusChangeListener yang mengontrol behavior.
+
+        // Password EditText listeners
+        binding.passwordEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                // Saat EditText mendapatkan fokus
+                if (!isPasswordInitialTextCleared && binding.passwordEditText.text.toString() == initialPasswordText) {
+                    binding.passwordEditText.setText("") // Hapus teks awal
+                    isPasswordInitialTextCleared = true // Set flag
+                }
+            } else {
+                // Saat EditText kehilangan fokus
+                if (binding.passwordEditText.text.toString().isEmpty()) {
+                    binding.passwordEditText.setText(initialPasswordText) // Kembalikan teks awal jika kosong
+                    isPasswordInitialTextCleared = false // Reset flag
+                }
+            }
+        }
+    }
+// ...
 
     private fun initializeSharedPreferences() {
         sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE)
@@ -89,6 +142,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+
+
     private fun setupPasswordToggle() {
         binding.passwordEditText.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
@@ -97,46 +152,57 @@ class LoginActivity : AppCompatActivity() {
                 if (drawable != null && event.rawX >= (binding.passwordEditText.right - drawable.bounds.width())) {
                     togglePasswordVisibility()
                     return@setOnTouchListener true
+                } else {
+                    // Jika tidak menyentuh icon, hapus placeholder jika ada
+                    if (binding.passwordEditText.text.toString() == "Masukan Password") {
+                        binding.passwordEditText.setText("")
+                    }
                 }
             }
             return@setOnTouchListener false
         }
     }
 
-    // --- PERBAIKAN DI SINI: Ikon untuk visibility off/on sudah dikoreksi ---
     private fun togglePasswordVisibility() {
         isPasswordVisible = !isPasswordVisible
 
-        if (isPasswordVisible) { // Password akan terlihat
+        if (isPasswordVisible) {
             binding.passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
             binding.passwordEditText.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                R.drawable.ic_lock, // Ikon kunci
+                R.drawable.ic_lock,
                 0,
-                R.drawable.ic_visibility, // Menggunakan ic_visibility_off saat password terlihat
+                R.drawable.ic_visibility,
                 0
             )
-        } else { // Password akan tersembunyi
+        } else {
             binding.passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             binding.passwordEditText.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                R.drawable.ic_lock, // Ikon kunci
+                R.drawable.ic_lock,
                 0,
-                R.drawable.ic_visibility, // Menggunakan ic_visibility saat password tersembunyi
+                R.drawable.ic_visibility,
                 0
             )
         }
-        // Pindahkan kursor ke akhir teks
         binding.passwordEditText.setSelection(binding.passwordEditText.text.length)
     }
-    // --- AKHIR PERBAIKAN ---
 
     private fun handleLogin() {
         val email = binding.emailEditText.text.toString().trim()
         val password = binding.passwordEditText.text.toString().trim()
 
         when {
-            email.isEmpty() -> { showToast(getString(R.string.toast_email_empty)) }
-            password.isEmpty() -> { showToast(getString(R.string.toast_password_empty)) }
-            !isValidEmail(email) -> { showToast(getString(R.string.toast_email_invalid)) }
+            email.isEmpty() || email == "Masukan Email" -> {
+                showToast(getString(R.string.toast_email_empty))
+                binding.emailEditText.requestFocus()
+            }
+            password.isEmpty() || password == "Masukan Password" -> {
+                showToast(getString(R.string.toast_password_empty))
+                binding.passwordEditText.requestFocus()
+            }
+            !isValidEmail(email) -> {
+                showToast(getString(R.string.toast_email_invalid))
+                binding.emailEditText.requestFocus()
+            }
             else -> {
                 loginUser(email, password)
             }
@@ -161,7 +227,7 @@ class LoginActivity : AppCompatActivity() {
 
             if (isRegistered && email == savedEmail && password == savedPassword) {
                 sharedPreferences.edit().apply {
-                    putBoolean("is_logged_in", true)
+                    putBoolean("is_logged_in", false)
                     apply()
                 }
 

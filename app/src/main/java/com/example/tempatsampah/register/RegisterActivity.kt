@@ -23,8 +23,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.tempatsampah.R
 import com.example.tempatsampah.login.LoginActivity
-// import com.example.tempatsampah.main.MainActivity // No longer needed for direct navigation after register
-
 import com.example.tempatsampah.databinding.ActivityRegisterBinding
 
 class RegisterActivity : AppCompatActivity() {
@@ -56,6 +54,7 @@ class RegisterActivity : AppCompatActivity() {
         setupAnimation()
         setupClickListeners()
         setupPasswordToggles()
+        setupPlaceholderBehavior()
     }
 
     private fun initializeSharedPreferences() {
@@ -97,12 +96,50 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupPlaceholderBehavior() {
+        // Setup untuk password field
+        binding.passwordEditText.apply {
+            setText("Masukan sandi")
+            setTextColor(resources.getColor(R.color.black, null))
+
+            setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus && text.toString() == "Masukan sandi") {
+                    setText("")
+                    setTextColor(resources.getColor(R.color.black, null))
+                } else if (!hasFocus && text.toString().isEmpty()) {
+                    setText("Masukan sandi")
+                    setTextColor(resources.getColor(R.color.black, null))
+                }
+            }
+        }
+
+        // Setup untuk confirm password field
+        binding.confirmPasswordEditText.apply {
+            setText("Konfirmasi sandi")
+            setTextColor(resources.getColor(R.color.black, null))
+
+            setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus && text.toString() == "Konfirmasi sandi") {
+                    setText("")
+                    setTextColor(resources.getColor(R.color.black, null))
+                } else if (!hasFocus && text.toString().isEmpty()) {
+                    setText("Konfirmasi sandi")
+                    setTextColor(resources.getColor(R.color.black, null))
+                }
+            }
+        }
+    }
+
     private fun setupPasswordToggles() {
         binding.passwordEditText.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 val drawableEnd = 2
                 val drawable = binding.passwordEditText.compoundDrawables[drawableEnd]
                 if (drawable != null && event.rawX >= (binding.passwordEditText.right - drawable.bounds.width())) {
+                    // Clear placeholder text jika masih berupa placeholder
+                    if (binding.passwordEditText.text.toString() == "Masukan sandi") {
+                        binding.passwordEditText.setText("")
+                    }
                     togglePasswordVisibility(binding.passwordEditText, isPasswordVisible, R.drawable.ic_lock)
                     isPasswordVisible = !isPasswordVisible
                     return@setOnTouchListener true
@@ -116,6 +153,10 @@ class RegisterActivity : AppCompatActivity() {
                 val drawableEnd = 2
                 val drawable = binding.confirmPasswordEditText.compoundDrawables[drawableEnd]
                 if (drawable != null && event.rawX >= (binding.confirmPasswordEditText.right - drawable.bounds.width())) {
+                    // Clear placeholder text jika masih berupa placeholder
+                    if (binding.confirmPasswordEditText.text.toString() == "Konfirmasi sandi") {
+                        binding.confirmPasswordEditText.setText("")
+                    }
                     togglePasswordVisibility(binding.confirmPasswordEditText, isConfirmPasswordVisible, R.drawable.ic_lock)
                     isConfirmPasswordVisible = !isConfirmPasswordVisible
                     return@setOnTouchListener true
@@ -125,36 +166,44 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    // --- PERBAIKAN DI SINI: Ikon untuk visibility off/on ---
     private fun togglePasswordVisibility(editText: EditText, currentVisibilityState: Boolean, drawableStartResId: Int) {
         val newVisibilityState = !currentVisibilityState
-        if (newVisibilityState) { // Password akan terlihat
+        if (newVisibilityState) {
             editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
             editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 drawableStartResId,
                 0,
-                R.drawable.ic_visibility, // Gunakan ikon mata tertutup/dicoret
+                R.drawable.ic_visibility,
                 0
             )
-        } else { // Password akan tersembunyi
+        } else {
             editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 drawableStartResId,
                 0,
-                R.drawable.ic_visibility, // Gunakan ikon mata terbuka
+                R.drawable.ic_visibility,
                 0
             )
         }
-        // Pindahkan kursor ke akhir teks
         editText.setSelection(editText.text.length)
     }
-    // --- AKHIR PERBAIKAN ---
 
     private fun handleRegistration() {
         val name = binding.nameEditText.text.toString().trim()
         val email = binding.emailEditText.text.toString().trim()
-        val password = binding.passwordEditText.text.toString().trim()
-        val confirmPassword = binding.confirmPasswordEditText.text.toString().trim()
+
+        // Handle placeholder text untuk password fields
+        val password = if (binding.passwordEditText.text.toString() == "Masukan sandi") {
+            ""
+        } else {
+            binding.passwordEditText.text.toString().trim()
+        }
+
+        val confirmPassword = if (binding.confirmPasswordEditText.text.toString() == "Konfirmasi sandi") {
+            ""
+        } else {
+            binding.confirmPasswordEditText.text.toString().trim()
+        }
 
         when {
             name.isEmpty() -> { showToast(getString(R.string.toast_name_empty)) }
@@ -192,7 +241,6 @@ class RegisterActivity : AppCompatActivity() {
 
             showToast(getString(R.string.toast_registration_success))
 
-            // Ini adalah bagian yang mengarahkan ke LoginActivity setelah registrasi berhasil
             val intent = Intent(this, LoginActivity::class.java).apply {
                 putExtra("registered_email", email)
                 putExtra("registered_password", password)
@@ -200,7 +248,7 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
 
-        }, 2000) // Simulasi waktu proses registrasi (2 detik)
+        }, 2000)
     }
 
     private fun setInputsEnabled(enabled: Boolean) {

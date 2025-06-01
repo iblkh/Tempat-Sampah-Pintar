@@ -1,13 +1,18 @@
 <resources>
     <string name="app_name">SmartBin</string>
     <string name="SmartBin" />
-    <string name="masukan_email">masukan email\n</string>
+    <string name="masukan_email">Masukan email\n</string>
     <string name="masukan_password">masukan password\n</string>
     <string name="lupa_password">lupa password</string>
     <string name="login">login</string>
     <string name="sudah_punya">sudah punya akun</string>
     <string name="belum_punya">belum punya akun\n</string>
     <string name="daftar">daftar\n</string>
+    <string name="hello_user">Hello User</string>
+    <string name="tombol_masukan_email">Masukan Email</string>
+    <string name="tombol_masukan_password">******</string>
+    <string name="tombol_konfirmasi_pas">Masukan Kata Sandi</string>
+    <string name="Nama_Pengguna">Nama Pengguna</string>
     <string name="smartbin_logo_description">\n</string>
     <string name="greeting_user_halo" />
     <string name="register_prompt_dulu" />
