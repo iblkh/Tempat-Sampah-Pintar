@@ -50,6 +50,9 @@ class SplashScreenActivity : AppCompatActivity() { // Pastikan nama kelas ini ko
     }
 
 
+
+
+
     private fun checkUserStatus() {
         val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
 
